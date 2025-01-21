@@ -1,0 +1,23 @@
+# Node.js
+node_modules/
+package-lock.json
+
+# dotenv environment files
+.env
+
+# Frontend build files
+/public/build/
+public/assets/
+
+# VSCode files
+.vscode/
+
+# Upload folders (for example in your case 'icons')
+/public/icons/
+
+# System files
+*.swp
+*.swo
+
+# Temporary files
+*.tmp

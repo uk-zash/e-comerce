@@ -24,9 +24,11 @@ app.use("/src", express.static(path.join(__dirname, "src")));
 
 const mainRoute = require("./routes/main")
 const categoryRoute = require("./routes/categories")
+const productRoute = require("./routes/products")
 
 app.use("/main" , mainRoute )
 app.use("/category" , categoryRoute)
+app.use("/products" , productRoute)
 
 
 

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= product.name %> | Product Detail</title>
+  <link rel="stylesheet" href="/css/nav.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome CDN for Star Icons -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body class="bg-gray-50">
+  <!-- Navbar (will be included) -->
+  <%- include('partials/navbar') %>
+
+  <!-- Main Product Detail Section -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Product Info Section -->
+    <div class="flex flex-col sm:flex-row bg-white p-6 rounded-lg shadow-md">
+      <!-- Image Section -->
+      <div class="w-full sm:w-1/2">
+        <!-- Main Image Display (Fixed size for consistency) -->
+        <div class="mb-4 relative" style="width: 100%; height: 400px;">
+          <img
+            id="mainImage"
+            src="<%= product.image %>"
+            alt="<%= product.name %>"
+            class="w-full h-full object-contain rounded-md"
+          />
+        </div>
+        <!-- Thumbnail Images -->
+        <div class="flex space-x-4 overflow-x-auto mt-4">
+          <% if (product.images && product.images.length > 0) { %>
+            <% product.images.forEach(image => { %>
+              <div>
+                <img
+                  src="<%= image %>"
+                  alt="<%= product.name %>"
+                  class="w-24 h-24 object-cover rounded-md cursor-pointer hover:opacity-75"
+                  onclick="changeMainImage('<%= image %>')"
+                />
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div>
+              <img
+                src="<%= product.image %>"
+                alt="<%= product.name %>"
+                class="w-24 h-24 object-cover rounded-md cursor-pointer hover:opacity-75"
+                onclick="changeMainImage('<%= product.image %>')"
+              />
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Product Info Section -->
+      <div class="sm:ml-6 sm:w-1/2 pt-4">
+        <!-- Product Name with Rating -->
+        <h1 class="text-3xl font-bold text-gray-800 mb-2"><%= product.name %></h1>
+        <div class="flex items-center space-x-2">
+          <div class="text-yellow-500">
+            <% for (let i = 0; i < 5; i++) { %>
+              <% if (i < product.rating) { %>
+                <i class="fas fa-star"></i> <!-- Full star -->
+              <% } else { %>
+                <i class="far fa-star"></i> <!-- Empty star -->
+              <% } %>
+            <% } %>
+          </div>
+          <span class="text-sm text-gray-600">(<%= product.reviews.length %> reviews)</span>
+        </div>
+        <div class="border-t border-gray-300 mt-2 pt-2"></div>
+
+        <!-- Price Section -->
+        <div class="mt-4">
+          <% let discount = 0; %>
+          <% if (product.originalPrice > product.price) { %>
+            <% discount = ((product.originalPrice - product.price) / product.originalPrice) * 100; %>
+            <p class="text-xl font-bold text-gray-900">
+              ₹<%= new Intl.NumberFormat('en-IN').format(product.price) %>
+            </p>
+            <p class="text-sm text-gray-500 line-through">
+              ₹<%= new Intl.NumberFormat('en-IN').format(product.originalPrice) %>
+            </p>
+            <p class="text-sm text-green-500 font-semibold">
+              You Save ₹<%= new Intl.NumberFormat('en-IN').format(product.originalPrice - product.price) %> 
+              (<%= discount.toFixed(0) %>%)
+            </p>
+          <% } else { %>
+            <p class="text-xl font-bold text-gray-900">
+              ₹<%= new Intl.NumberFormat('en-IN').format(product.price) %>
+            </p>
+          <% } %>
+          <p class="text-sm text-gray-500 mt-1">Inclusive of all taxes</p>
+        </div>
+        <div class="border-t border-gray-300 mt-2 pt-2"></div>
+
+        <!-- Delivery & Warranty Options -->
+        <div class="mt-4">
+          <div class="flex items-center space-x-3">
+            <!-- 7 Days Replacement is Always Visible -->
+            <span class="text-sm text-gray-600">
+              <i class="fas fa-sync-alt text-blue-500"></i> 7 Days Replacement
+            </span>
+            <% if (product.freeDelivery) { %>
+              <span class="text-sm text-gray-600">
+                <i class="fas fa-truck text-green-500"></i> Free Delivery
+              </span>
+            <% } %>
+            <% if (product.warranty) { %>
+              <span class="text-sm text-gray-600">
+                <i class="fas fa-shield-alt text-yellow-500"></i> Warranty Available
+              </span>
+            <% } %>
+            <% if (product.cashOnDelivery) { %>
+              <span class="text-sm text-gray-600">
+                <i class="fas fa-money-bill-wave text-green-500"></i> Cash/Pay on Delivery
+              </span>
+            <% } %>
+          </div>
+        </div>
+        <div class="border-t border-gray-300 mt-2 pt-2"></div>
+
+        <!-- Specifications Section -->
+        <div class="mt-4">
+          <h3 class="text-lg font-semibold text-gray-800">Specifications</h3>
+          <ul class="list-disc pl-5 text-gray-600 mt-2">
+            <% if (product.brand) { %>
+              <li><strong>Brand:</strong> <%= product.brand %></li>
+            <% } %>
+
+            <% if (product.model && typeof product.model !== 'function') { %>
+                <li><strong>Model:</strong> <%= product.model %></li>
+              <% } else { %>
+                <li><strong>Model:</strong> Not available</li>
+              <% } %>
+            <% if (product.color) { %>
+              <li><strong>Color:</strong> <%= product.color %></li>
+            <% } %>
+          </ul>
+        </div>
+        <div class="border-t border-gray-300 mt-2 pt-2"></div>
+
+        <!-- About This Item -->
+        <div class="mt-4">
+          <h3 class="text-lg font-semibold text-gray-800">About This Item</h3>
+          <p class="text-gray-600 mt-2"><%= product.description %></p>
+        </div>
+        <div class="border-t border-gray-300 mt-2 pt-2"></div>
+
+        <!-- Add to Cart Button -->
+        <div class="mt-4">
+          <button
+            class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+            onclick="addToCart('<%= product._id %>')"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="bg-white mt-12 p-6 rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Customer Reviews</h2>
+
+      <!-- Check if there are reviews -->
+      <% if (product.reviews.length > 0) { %>
+        <% product.reviews.forEach(review => { %>
+          <div class="border-b py-4">
+            <!-- Display the dummy user's name -->
+            <div class="flex items-center mb-2">
+              <span class="font-semibold text-gray-700"><%= review.user.name || 'Anonymous' %></span>
+              <div class="ml-2 text-yellow-500">
+                <% for (let i = 0; i < review.rating; i++) { %>
+                  <i class="fas fa-star"></i>
+                <% } %>
+              </div>
+            </div>
+            
+            <!-- Comment text -->
+            <p class="text-gray-600"><%= review.comment %></p>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p>No reviews yet. Be the first to review this product!</p>
+      <% } %>
+
+      <!-- Review Input Form -->
+      <h3 class="text-xl font-semibold mt-8 mb-4">Leave a Review</h3>
+      <form action="/product/<%= product._id %>/review" method="POST" class="space-y-4">
+        <div>
+          <label for="rating" class="block text-lg font-medium text-gray-700">Rating</label>
+          <select
+            name="rating"
+            id="rating"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            required
+          >
+            <option value="">Select Rating</option>
+            <option value="1">1 Star</option>
+            <option value="2">2 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="5">5 Stars</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="comment" class="block text-lg font-medium text-gray-700">Comment</label>
+          <textarea
+            name="comment"
+            id="comment"
+            rows="4"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Write your review here..."
+            required
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600"
+        >
+          Submit Review
+        </button>
+      </form>
+    </div>
+
+    <!-- Related Products Section -->
+    <div class="bg-white mt-12 p-6 rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Related Products</h2>
+
+      <div class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+        <% relatedProducts.forEach(product => { %>
+          <a href="/product/<%= product._id %>" class="group">
+            <img
+              src="<%= product.image %>"
+              alt="<%= product.name %>"
+              class="aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-[7/8]"
+            />
+            <h3 class="mt-4 text-sm text-gray-700 truncate overflow-hidden"><%= product.name %></h3>
+            <p class="mt-2 text-base font-medium text-gray-900">
+              ₹<%= new Intl.NumberFormat('en-IN').format(product.price) %>
+            </p>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <%- include('partials/footer') %>
+
+  <script src="/js/nav.js"></script>
+
+  <script>
+    // Function to change the main image when a thumbnail is clicked
+    function changeMainImage(imageSrc) {
+      const mainImage = document.getElementById("mainImage");
+      mainImage.src = imageSrc;
+    }
+
+    function addToCart(productId) {
+      // Handle Add to Cart functionality (to be implemented)
+      console.log(`Product ${productId} added to cart!`);
+    }
+  </script>
+</body>
+</html>

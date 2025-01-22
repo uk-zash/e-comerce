@@ -86,7 +86,7 @@ const productSchema = new mongoose.Schema({
         type:Date , 
         default:Date.now
     },
-    tage:[{
+    tags:[{
         type:String
     }]
 

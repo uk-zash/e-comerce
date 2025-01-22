@@ -14,7 +14,7 @@ public/assets/
 
 # Upload folders (for example in your case 'icons')
 /public/icons/
-
+/public/uploads/
 # System files
 *.swp
 *.swo
